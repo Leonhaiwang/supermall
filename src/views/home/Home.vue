@@ -1,24 +1,144 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot = "center">购物街</div></nav-bar>
-    <home-swiper :banners="banners"/>
-    <recommend-view :recommends="recommends"/>
+     <home-swiper :banners="banners"/>
+      <recommend-view :recommends="recommends"/>
+      <feature-views></feature-views>
+      <tab-control class="tabcontrol" :titles="['流行','新款','精选']"/>
+
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+         <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+         <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+         <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        
+      </ul>
   </div>
 </template>
 
 <script>
-  import NavBar from 'components/common/navbar/NavBar';
-  // import HomeSwiper from './childComps/HomeSwiper'
-  // import RecommendView from './childComps/RecommendView'
+  
+  import HomeSwiper from './childComps/HomeSwiper'
+  import RecommendView from './childComps/RecommendView'
+  import FeatureViews from './childComps/FeatureViews'
 
-  // import {getHomeMultidata} from "network/home";
+  import NavBar from 'components/common/navbar/NavBar';
+  import tabControl from 'components/conent/tabControl/tabControl'
+
+  import {getHomeMultidata} from "network/home";
 
   export default {
     name: "Home",
     components: {
       NavBar,
-      // HomeSwiper,
-      // RecommendView
+      HomeSwiper,
+      RecommendView,
+      FeatureViews,
+      tabControl
     },
     data() {
       return {
@@ -28,18 +148,31 @@
     },
     created() {
       // 1.请求多个数据
-      // getHomeMultidata().then(res => {
-      //   // this.result = res;
-      //   this.banners = res.data.banner.list;
-      //   this.recommends = res.data.recommend.list;
-      // })
+      getHomeMultidata().then(res => {
+        // console.log(res)
+        this.banners = res.data.banner.list;
+        this.recommends = res.data.recommend.list;
+      })
     }
   }
 </script>
 
 <style scoped>
+  #home{
+    padding-top: 44px;
+  }
   .home-nav {
     background-color: var(--color-tint);
     color: #fff;
+
+    position: fixed;
+    top:0;
+    left: 0;
+    right:0;
+    z-index: 9;
+  }
+  .tabcontrol{
+    position: sticky;
+    top: 44px;
   }
 </style>
