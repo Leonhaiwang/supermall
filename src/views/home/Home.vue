@@ -6,117 +6,7 @@
       <feature-views></feature-views>
       <tab-control class="tabcontrol" :titles="['流行','新款','精选']"/>
 
-      <ul>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-         <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-         <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-         <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        
-      </ul>
+  
   </div>
 </template>
 
@@ -129,7 +19,7 @@
   import NavBar from 'components/common/navbar/NavBar';
   import tabControl from 'components/conent/tabControl/tabControl'
 
-  import {getHomeMultidata} from "network/home";
+  import {getHomeMultidata,getHomeGoods} from "network/home";
 
   export default {
     name: "Home",
@@ -143,7 +33,12 @@
     data() {
       return {
         banners: [],
-        recommends: []
+        recommends: [],
+        goods:{
+          'pop':{page:0 ,list:[]},
+          'new':{page:0 ,list:[]},
+          'sell':{page:0 ,list:[]}
+        }
       }
     },
     created() {
@@ -153,7 +48,18 @@
         this.banners = res.data.banner.list;
         this.recommends = res.data.recommend.list;
       })
-    }
+      //请求商品数据
+      this.getHomeGoods('pop')
+      this.getHomeGoods('new')
+      this.getHomeGoods('sell')
+    },
+    methods: {
+      getHomeGoods(type){
+        getHomeGoods(type,1).then(res => {
+          
+        })
+      }
+    },
   }
 </script>
 
