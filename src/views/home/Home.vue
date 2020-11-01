@@ -1,12 +1,14 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot = "center">购物街</div></nav-bar>
-     <home-swiper :banners="banners"/>
-      <recommend-view :recommends="recommends"/>
-      <feature-views></feature-views>
-      <tab-control class="tabcontrol" :titles="['流行','新款','精选']"/>
-
-  
+      <div class="wrapper">
+        <home-swiper :banners="banners"/>
+        <recommend-view :recommends="recommends"/>
+        <feature-views></feature-views>
+        <tab-control class="tabcontrol" :titles="['流行','新款','精选']" @tabClick = "tabClick" />
+        <goods-list :goods = "showGoods"/>
+      </div>
+      
   </div>
 </template>
 
@@ -18,9 +20,11 @@
 
   import NavBar from 'components/common/navbar/NavBar';
   import tabControl from 'components/conent/tabControl/tabControl'
+  import GoodsList from 'components/goods/GoodsList'
 
   import {getHomeMultidata,getHomeGoods} from "network/home";
 
+  
   export default {
     name: "Home",
     components: {
@@ -28,7 +32,8 @@
       HomeSwiper,
       RecommendView,
       FeatureViews,
-      tabControl
+      tabControl,
+      GoodsList
     },
     data() {
       return {
@@ -38,7 +43,8 @@
           'pop':{page:0 ,list:[]},
           'new':{page:0 ,list:[]},
           'sell':{page:0 ,list:[]}
-        }
+        },
+        currentType:'pop'
       }
     },
     created() {
@@ -53,10 +59,35 @@
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
     },
+    computed: {
+      showGoods() {
+        return this.goods[this.currentType].list
+      }
+    },
     methods: {
-      getHomeGoods(type){
-        getHomeGoods(type,1).then(res => {
+      // 事件监听
+      tabClick(index) {
+        switch(index){
+          case 0:
+            this.currentType = 'pop'
+            break
+          case 2:
+            this.currentType = 'new'
+            break
+          case 3:
+            this.currentType = 'sell'
+            break
           
+        }
+      }
+      ,
+      //网络请求的
+      getHomeGoods(type){
+        const page =  this.goods[type].page + 1
+        getHomeGoods(type,page).then(res => {
+          // 解析数组放在list中
+          this.goods[type].list.push(...res.data.list)
+          this.goods[type].page+=1
         })
       }
     },
@@ -77,8 +108,9 @@
     right:0;
     z-index: 9;
   }
-  .tabcontrol{
+  .tab-control{
     position: sticky;
     top: 44px;
+    z-index: 99;
   }
 </style>
