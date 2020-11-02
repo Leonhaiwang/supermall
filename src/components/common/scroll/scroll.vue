@@ -32,7 +32,8 @@
       this.scroll = new BScroll(this.$refs.wrapper, {
         click: true,
         probeType: this.probeType,
-        pullUpLoad: this.pullUpLoad
+        pullUpLoad: this.pullUpLoad,
+
       })
 
       // 2.监听滚动的位置
@@ -40,16 +41,20 @@
         // console.log(position);
         this.$emit('scroll', position)
       })
-
+      this.scroll.on('pullingUp',()=> {
+        this.$emit('pullingUp')
+      })
      
     },
     methods: {
       scrollTo(x, y, time=300) {
         this.scroll.scrollTo(x, y, time)
       },
-      finishPullUp() {
-        this.scroll.finishPullUp()
+      finshPullUp() {
+        this.scroll.finshPullUp()
       }
+      
+      
     }
   }
 </script>

@@ -1,12 +1,18 @@
 <template>
   <div id="home" class="wrapper">
     <nav-bar class="home-nav"><div slot = "center">购物街</div></nav-bar>
-      <scroll class="content" ref="scroll" :probe-type = "3" @scroll = "contentScroll">
-        <home-swiper :banners="banners"/>
-        <recommend-view :recommends="recommends"/>
-        <feature-views></feature-views>
-        <tab-control class="tabcontrol" :titles="['流行','新款','精选']" @tabClick = "tabClick" />
-        <goods-list :goods = "showGoods"/>
+      <scroll class="content" 
+        ref="scroll" 
+        :probe-type = "3" 
+        :pull-up-load="true"
+        @scroll = "contentScroll"
+        @pullingUp = "loadMore"
+        >
+      <home-swiper :banners="banners"/>
+      <recommend-view :recommends="recommends"/>
+      <feature-views></feature-views>
+      <tab-control class="tabcontrol" :titles="['流行','新款','精选']" @tabClick = "tabClick" />
+      <goods-list :goods = "showGoods"/>
       </scroll>
       <back-top @click.native="backClick" v-show="isShow"/>
   </div>
@@ -19,7 +25,7 @@
   import FeatureViews from './childComps/FeatureViews'
 
   import NavBar from 'components/common/navbar/NavBar';
-  import tabControl from 'components/conent/tabControl/tabControl'
+  import TabControl from 'components/conent/tabControl/tabControl'
   import GoodsList from 'components/goods/GoodsList'
   import Scroll from 'components/common/scroll/scroll'
   import BackTop from 'components/conent/backtop/BackTop'
@@ -34,7 +40,7 @@
       HomeSwiper,
       RecommendView,
       FeatureViews,
-      tabControl,
+      TabControl,
       GoodsList,
       Scroll,
       BackTop
@@ -49,7 +55,8 @@
           'sell':{page:0 ,list:[]}
         },
         currentType:'pop',
-        isShow:false
+        isShow:false,
+        
       }
     },
     created() {
@@ -80,9 +87,15 @@
             break
         }
       },
+      loadMore(){
+        this.getHomeGoods(this.currentType)
+      },
       contentScroll(position){
-        // this.isShow = (-position)<1000
-        console.log(position)
+        //  this.isShow = (-position.y) > 1000
+        if((-position.y) > 1000){
+           this.isShow = true
+        }
+        // console.log(position)
       }
       ,
       backClick(){
@@ -109,6 +122,8 @@
           // this.result = res;
           this.banners = res.data.banner.list;
           this.recommends = res.data.recommend.list;
+
+          this.$refs.scroll.finshPullUp()
         })
       },
     },
