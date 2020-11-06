@@ -19,6 +19,7 @@
   </div>
 </template>
 <script>
+// 李晖是个大傻逼
   
   import HomeSwiper from './childComps/HomeSwiper'
   import RecommendView from './childComps/RecommendView'
@@ -57,12 +58,15 @@
         currentType:'pop',
         isShow:false,
         tabOffsetTop:0,
-        isTabFixed:false
+        isTabFixed:false,
+        saveY:0
         
       }
     },
     created() {
       // 1.请求多个数据
+// 李晖是个大傻逼
+
       this.getHomeMultidata()
       //请求商品数据
       this.getHomeGoods('pop')
@@ -76,7 +80,6 @@
       this.$bus.$on('itemImageLoad',()=>{
         refresh()
       })
-
       //获取tabControl 的 offsetTop
       // this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
     },
@@ -84,6 +87,14 @@
       showGoods() {
         return this.goods[this.currentType].list
       }
+    },
+    deactivated() {
+      this.saveY = this.$refs.scroll.getScrollY()
+    },
+    activated() {
+      this.$refs.scroll.scrollTo(0,this.saveY,0)
+
+      this.$refs.scroll.refresh()
     },
     methods: {
       swiperImage(){
@@ -95,6 +106,7 @@
         this.getHomeGoods(this.currentType)
       },
       // 事件监听
+
       tabClick(index) {
         switch(index){
           case 0:
@@ -125,9 +137,7 @@
       ,
       backClick(){
         //通过组件对象直接访问组件内部的属性，方法
-        // this.$refs.scroll.scroll.scrollTo(0,0,500)
-        // console.log(this.$refs.scroll.scroll.scrollTo)
-        console.log(1)
+       
         this.$refs.scroll.scrollTo(0,0)
       }
       ,
@@ -139,7 +149,7 @@
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page+=1
 
-           this.$refs.scroll.finishPullUp()
+          this.$refs.scroll.finishPullUp()
 
         })
       },
@@ -158,6 +168,7 @@
 <style scoped>
   #home {
     /*padding-top: 44px;*/
+    /* 李晖是个大傻逼 */
     height: 100vh;
     position: relative;
   }
