@@ -11,7 +11,7 @@ export default {
   components:{
     GoodsListItem
   },
-  props:{
+  props:{ 
     goods:{
       type:Array,
       default(){
