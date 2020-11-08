@@ -19,7 +19,6 @@
   </div>
 </template>
 <script>
-// 李晖是个大傻逼
   
   import HomeSwiper from './childComps/HomeSwiper'
   import RecommendView from './childComps/RecommendView'
@@ -167,8 +166,7 @@
 
 <style scoped>
   #home {
-    /*padding-top: 44px;*/
-    /* 李晖是个大傻逼 */
+   
     height: 100vh;
     position: relative;
   }
