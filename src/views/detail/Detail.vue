@@ -1,13 +1,16 @@
 <template >
   <div id="detail">
-    <detail-nav-bar class="detail-nav"/>
-     <scroll class="content" ref="scroll">
+    <detail-nav-bar class="detail-nav" @titleClick = "titleClick" ref="navbar"/>
+     <scroll class="content" ref="scroll" :probe-type = "3" @scroll="contentScroll">
       <detail-swiper :top-images="topImages"/>
       <detail-base-info :goods='goods'></detail-base-info>
       <detail-shop-info :shop='shop'></detail-shop-info>
-      <detail-goods-info :detail-info="detailInfo" @imgLoad = "imgLoad"></detail-goods-info>
-      <detail-param-info :param-info = "paramInfo"></detail-param-info>
+      <detail-goods-info :detail-info="detailInfo" @imgLoad = "detailImageLoad"></detail-goods-info>
+      <detail-param-info ref="param" :param-info = "paramInfo"></detail-param-info>
+      <detail-comment-info ref="comment" :comment= "commentInfo"></detail-comment-info>
+      <goods-list ref = "recommend" :goods='recommend'></goods-list>
      </scroll>
+     <detail-bottom-bar></detail-bottom-bar>
   </div>
 </template>
 <script>
@@ -17,9 +20,14 @@ import DetailBaseInfo from './childComponents/DetailBaseInfo'
 import DetailShopInfo from './childComponents/DetailShopInfo'
 import DetailGoodsInfo from './childComponents/DetailGoodsInfo'
 import DetailParamInfo from './childComponents/DetailParamInfo'
+import DetailCommentInfo from './childComponents/DetailCommentInfo'
+import DetailBottomBar from './childComponents/DetailBottomBar'
+import {debounce} from 'common/util'
+import {itemListenerMixin} from 'common/mixin'
+import BackTop from 'components/conent/backtop/BackTop'
 import Scroll from 'components/common/scroll/scroll'
-
-import {getDetail, Goods, Shop, GoodsParam} from "network/detail";
+import GoodsList from 'components/goods/GoodsList'
+import {getDetail, Goods, Shop, GoodsParam,getRecommend} from "network/detail";
 export default {
   name:'Detail',
   components:{
@@ -29,7 +37,11 @@ export default {
     DetailShopInfo,
     DetailGoodsInfo,
     DetailParamInfo,
-    Scroll
+    DetailCommentInfo,
+    DetailBottomBar,
+    GoodsList,
+    Scroll,
+    BackTop
   },
   data() {
     return {
@@ -38,9 +50,17 @@ export default {
       goods:{},
       shop:{},
       detailInfo:{},
-       paramInfo: {}
+      paramInfo: {},
+      commentInfo:{},
+      recommend:[],
+      themeTopY:[],
+      themeTopYfunc:null,
+      currentIndex:0,
+      isShow:false,
     }
-  },created() {
+  },
+  mixins:[itemListenerMixin],
+  created() {
     //保存iid
     this.iid = this.$route.params.iid
     //请求数据
@@ -58,12 +78,78 @@ export default {
 
       
       this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
-    })
 
+      if(data.rate.cRate != 0){
+        this.commentInfo = data.rate.list[0]
+      }
+
+      this.$nextTick(()=>{
+        // 根据最新的数据，对应的DOM是已经被加载完的
+        // 但是图片依然是没有加载完的
+       
+       
+      })
+      
+    })
+    getRecommend().then(res=>{
+      this.recommend = res.data.list
+    })
+    //监听详情图片加载完成
+    this.themeTopYfunc = debounce(()=>{
+        this.themeTopY = []
+        this.themeTopY.push(0)
+        this.themeTopY.push(this.$refs.param.$el.offsetTop)
+        this.themeTopY.push(this.$refs.comment.$el.offsetTop)
+        this.themeTopY.push(this.$refs.recommend.$el.offsetTop)
+        this.themeTopY.push(Number.MAX_VALUE)
+        console.log(themeTopY)
+    },500)
+  },
+  updated() {
+    // this.themeTopY = []
+    // this.themeTopY.push(0)
+    // this.themeTopY.push(this.$refs.param.$el.offsetTop)
+    // this.themeTopY.push(this.$refs.comment.$el.offsetTop)
+    // this.themeTopY.push(this.$refs.recommend.$el.offsetTop)
+  },
+  mounted() {
+    
   },
   methods: {
-    imgLoad(){
-      this.$refs.scroll.refresh()
+    contentScroll(position){
+       
+        if((-position.y) > 1000){
+           this.isShow = true
+        }
+
+        //判断tabcontrol是否吸顶
+        this.isTabFixed = (-position.y) > this.tabOffsetTop
+
+
+      },
+    detailImageLoad(){
+      this.newRefresh()
+      this.themeTopYfunc()
+    },
+    titleClick(index){
+      this.$refs.scroll.scrollTo(0,-this.themeTopY[index],100)
+    },
+    contentScroll(position){
+      
+     const y = -position.y
+     let length = this.themeTopY.length-1
+      // for(let i in this.themeTopY){
+        // if(this.currentIndex != i &&(i<length-1 && y > this.themeTopY[i] && y < this.themeTopY[i+1]) || (i == length-1 && y >this.themeTopY[i])){
+        //   this.currentIndex = i
+        //  this.$refs.navbar.currentIndex = this.currentIndex
+        // }
+        for(let i = 0;i<length-1;i++){
+          if(this.currentIndex!=i &&(y>=this.themeTopY[i] && y < this.themeTopY[i+1])){
+
+        }
+        }
+        
+      
     }
   },
 }
@@ -78,7 +164,6 @@ export default {
  
   .content {
     overflow: hidden;
-
     position: absolute;
     top: 44px;
     bottom: 49px;

@@ -32,7 +32,7 @@
   
   import {getHomeMultidata,getHomeGoods} from "network/home";
   import {debounce} from 'common/util'
-  
+  import {itemListenerMixin} from 'common/mixin'
   export default {
     name: "Home",
     components: {
@@ -58,13 +58,13 @@
         isShow:false,
         tabOffsetTop:0,
         isTabFixed:false,
-        saveY:0
+        saveY:0,
         
       }
     },
+    mixins:[itemListenerMixin],
     created() {
       // 1.请求多个数据
-// 李晖是个大傻逼
 
       this.getHomeMultidata()
       //请求商品数据
@@ -74,11 +74,11 @@
 
     },
     mounted() {
-     const refresh = debounce(this.$refs.scroll.refresh,200)
+    //  const refresh = debounce(this.$refs.scroll.refresh,200)
       //开始监听itenm中图片加载完成
-      this.$bus.$on('itemImageLoad',()=>{
-        refresh()
-      })
+      // this.$bus.$on('itemImageLoad',()=>{
+      //   refresh()
+      // })
       //获取tabControl 的 offsetTop
       // this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
     },
@@ -89,6 +89,8 @@
     },
     deactivated() {
       this.saveY = this.$refs.scroll.getScrollY()
+
+      // this.$bus.$off('itemImageLoad')
     },
     activated() {
       this.$refs.scroll.scrollTo(0,this.saveY,0)
