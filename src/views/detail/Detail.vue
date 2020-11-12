@@ -10,7 +10,9 @@
       <detail-comment-info ref="comment" :comment= "commentInfo"></detail-comment-info>
       <goods-list ref = "recommend" :goods='recommend'></goods-list>
      </scroll>
-     <detail-bottom-bar></detail-bottom-bar>
+     <detail-bottom-bar @addCart = "addCart"></detail-bottom-bar>
+     <!-- <toast :message = "hhh"> </toast> -->
+
   </div>
 </template>
 <script>
@@ -28,6 +30,8 @@ import BackTop from 'components/conent/backtop/BackTop'
 import Scroll from 'components/common/scroll/scroll'
 import GoodsList from 'components/goods/GoodsList'
 import {getDetail, Goods, Shop, GoodsParam,getRecommend} from "network/detail";
+
+// import Toast from 'components/common/Toast/Toast'
 export default {
   name:'Detail',
   components:{
@@ -41,7 +45,8 @@ export default {
     DetailBottomBar,
     GoodsList,
     Scroll,
-    BackTop
+    BackTop,
+    // Toast
   },
   data() {
     return {
@@ -57,6 +62,7 @@ export default {
       themeTopYfunc:null,
       currentIndex:0,
       isShow:false,
+      // res
     }
   },
   mixins:[itemListenerMixin],
@@ -116,6 +122,26 @@ export default {
     
   },
   methods: {
+    addCart(){
+      //添加购物车需要展示的信息
+      const product  ={}
+      product.image = this.topImages[0]
+      product.title = this.detailInfo.title
+      product.desc = this.detailInfo.desc
+      product.price = this.detailInfo.realPrice
+      product.newPrice = this.detailInfo.newlPrice
+      
+      product.iid = this.iid
+      
+      this.$store.dispatch('addCart',product).then(res=>{
+        // this.$toast.show(res,2000)
+        console.log(this.$toast)
+        
+      })
+
+      //添加购物车成功
+
+    },
     contentScroll(position){
        
         if((-position.y) > 1000){
@@ -171,7 +197,7 @@ export default {
     right: 0;
   }
   .detail-nav{
-    position: relative;
+    position: fixed;
     z-index: 99;
     background-color: #fff;
   }
